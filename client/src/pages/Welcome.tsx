@@ -22,14 +22,14 @@ const Welcome: React.FC = () => {
       <Row gutter={20}>
         <Col flex="2">
           <Link to="/create">
-            <Button type="primary" shape="round" block>
-              Создать игру
+            <Button className="text-uppercase" type="primary" shape="round" block>
+              <b>Создать игру</b>
             </Button>
           </Link>
         </Col>
         <Col flex="1">
           <Link to="/connect">
-            <Button type="default" shape="round" block>
+            <Button className="text-uppercase" type="default" shape="round" block>
               Подключиться к игре
             </Button>
           </Link>
