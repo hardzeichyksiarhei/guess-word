@@ -51,12 +51,12 @@ body {
     font-style: normal;
     font-weight: lighter;
     font-size: 1.2rem;
-    line-height: 1.5rem;
+    line-height: 1;
     color: #a1a4b2;
     padding: 1rem 0;
+    margin-bottom: 1rem;
   }
   &__content {
     flex-grow: 1;
-    margin-top: 60px;
   }
 }

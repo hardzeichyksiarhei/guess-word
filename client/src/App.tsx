@@ -13,6 +13,7 @@ import Rules from "./pages/Rules";
 
 import gameState from "./store/gameState";
 import appState from "./store/appState";
+import playerState from "./store/playerState";
 
 const SERVER_URL = "http://localhost:5000";
 
@@ -26,6 +27,7 @@ const App: React.FC = observer(() => {
     socket.on("game:created", (payload: string) => {
       navigate(`/${payload}/lobby`);
       gameState.setGameId(payload);
+      playerState.updateCurrentPlayer({ isOwner: true });
     });
   }, []);
 
