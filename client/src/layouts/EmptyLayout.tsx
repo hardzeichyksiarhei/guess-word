@@ -1,14 +1,12 @@
-import React, { Component } from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
 
-class EmptyLayout extends Component {
-  render() {
-    return (
-      <div className="empty-layout">
-        <Outlet />
-      </div>
-    );
-  }
-}
+const EmptyLayout: React.FC = () => {
+  return (
+    <div className="empty-layout">
+      <Outlet />
+    </div>
+  );
+};
 
 export default EmptyLayout;
