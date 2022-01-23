@@ -10,7 +10,7 @@ const Welcome: React.FC = () => {
       <h2 className="welcome-page__game-name">Guess Word</h2>
       <img
         className="welcome-page__app-logo"
-        src="./img/app-logo.png"
+        src="/img/app-logo.png"
         alt="Guess Word"
       />
       <div className="welcome-page__title">Угадай слово+</div>
