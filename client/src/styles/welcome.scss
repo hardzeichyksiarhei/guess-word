@@ -1,0 +1,32 @@
+.welcome-page {
+  &__app-logo {
+    display: block;
+    max-width: 600px;
+    width: 100%;
+    height: auto;
+    margin: 30px auto;
+  }
+  &__game-name {
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+    letter-spacing: 0.24em;
+    color: #000;
+    text-align: center;
+  }
+  &__title {
+    font-weight: normal;
+    font-size: 30px;
+    line-height: 41px;
+    text-align: center;
+    color: #3f414e;
+  }
+  &__description {
+    font-weight: lighter;
+    font-size: 16px;
+    line-height: 26px;
+    text-align: center;
+    color: #000;
+    margin: 30px 0;
+  }
+}
