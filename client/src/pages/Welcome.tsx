@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button } from "antd";
+import { Button, Col, Row } from "antd";
 
 import "../styles/welcome.scss";
 
@@ -19,11 +19,22 @@ const Welcome: React.FC = () => {
         где Вам необходимо объяснить слово используя слова начинающиеся с одной
         случайной буквы.
       </div>
-      <Link to="/settings">
-        <Button type="primary" shape="round" block>
-          Ок, погнали
-        </Button>
-      </Link>
+      <Row gutter={20}>
+        <Col flex="2">
+          <Link to="/create">
+            <Button type="primary" shape="round" block>
+              Создать игру
+            </Button>
+          </Link>
+        </Col>
+        <Col flex="1">
+          <Link to="/connect">
+            <Button type="default" shape="round" block>
+              Подключиться к игре
+            </Button>
+          </Link>
+        </Col>
+      </Row>
     </div>
   );
 };
