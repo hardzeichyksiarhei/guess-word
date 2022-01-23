@@ -9,6 +9,7 @@ import Welcome from "./pages/Welcome";
 import Create from "./pages/Create";
 import Connect from "./pages/Connect";
 import Lobby from "./pages/Lobby";
+import Rules from "./pages/Rules";
 
 import gameState from "./store/gameState";
 import appState from "./store/appState";
@@ -23,8 +24,8 @@ const App: React.FC = observer(() => {
     appState.setSocket(socket);
 
     socket.on("game:created", (payload: string) => {
+      navigate(`/${payload}/lobby`);
       gameState.setGameId(payload);
-      navigate(`/lobby/${payload}`);
     });
   }, []);
 
@@ -33,12 +34,15 @@ const App: React.FC = observer(() => {
       <Route index element={<Welcome />} />
       <Route path="create" element={<Create />} />
       <Route path="connect" element={<Connect />} />
+      <Route path="*" element={<Welcome />} />
     </Route>
   );
 
   const privateRoutes = (
-    <Route path="/" element={<DefaultLayout />}>
-      <Route path="lobby/:gameId" element={<Lobby />} />
+    <Route path="/:gameId" element={<DefaultLayout />}>
+      <Route index element={<Lobby />} />
+      <Route path="rules" element={<Rules />} />
+      <Route path="*" element={<Lobby />} />
     </Route>
   );
 
