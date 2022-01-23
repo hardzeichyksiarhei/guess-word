@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { observer } from "mobx-react";
 
@@ -8,7 +8,7 @@ import DefaultLayout from "./layouts/DefaultLayout";
 import Welcome from "./pages/Welcome";
 import Create from "./pages/Create";
 import Connect from "./pages/Connect";
-import Profile from "./pages/Profile";
+import Lobby from "./pages/Lobby";
 
 import gameState from "./store/gameState";
 import appState from "./store/appState";
@@ -16,12 +16,15 @@ import appState from "./store/appState";
 const SERVER_URL = "http://localhost:5000";
 
 const App: React.FC = observer(() => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     const socket = io(`${SERVER_URL}/game`);
     appState.setSocket(socket);
 
     socket.on("game:created", (payload: string) => {
       gameState.setGameId(payload);
+      navigate(`/lobby/${payload}`);
     });
   }, []);
 
@@ -35,16 +38,15 @@ const App: React.FC = observer(() => {
 
   const privateRoutes = (
     <Route path="/" element={<DefaultLayout />}>
-      <Route index element={<Profile />} />
+      <Route path="lobby/:gameId" element={<Lobby />} />
     </Route>
   );
 
+  const routes = !gameState.gameId ? publicRoutes : privateRoutes;
+
   return (
     <div className="app">
-      <Routes>
-        {publicRoutes}
-        {privateRoutes}
-      </Routes>
+      <Routes>{routes}</Routes>
     </div>
   );
 });

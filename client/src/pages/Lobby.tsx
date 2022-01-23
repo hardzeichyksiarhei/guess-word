@@ -2,9 +2,9 @@ import React from "react";
 import { Row, Col, Button } from "antd";
 import { Link } from "react-router-dom";
 
-const Profile: React.FC = () => {
+const Lobby: React.FC = () => {
   return (
-    <div className="settings-page">
+    <div className="lobby-page">
       <Row justify="space-between" align="middle">
         <Col flex="3">
           <div className="page-title">Раздевалка</div>
@@ -40,4 +40,4 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile;
+export default Lobby;
