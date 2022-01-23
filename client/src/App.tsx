@@ -1,4 +1,6 @@
+import React, { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
+import { io } from "socket.io-client";
 
 import EmptyLayout from "./layouts/EmptyLayout";
 import DefaultLayout from "./layouts/DefaultLayout";
@@ -7,7 +9,19 @@ import Create from "./pages/Create";
 import Connect from "./pages/Connect";
 import Profile from "./pages/Profile";
 
-function App() {
+import gameState from "./store/gameState";
+import appState from "./store/appState";
+
+const SERVER_URL = "http://localhost:5000";
+
+const App: React.FC = () => {
+  useEffect(() => {
+    const socket = io(`${SERVER_URL}/game`);
+    appState.setSocket(socket);
+
+    socket.on("game:created", gameState.setGameId);
+  }, []);
+
   const publicRoutes = (
     <Route path="/" element={<EmptyLayout />}>
       <Route index element={<Welcome />} />
@@ -30,6 +44,6 @@ function App() {
       </Routes>
     </div>
   );
-}
+};
 
 export default App;
