@@ -2,15 +2,17 @@ import React from "react";
 import { Row, Col, Button } from "antd";
 import { Link } from "react-router-dom";
 
+import gameState from "../store/gameState";
+
 const Lobby: React.FC = () => {
   return (
-    <div className="lobby-page">
+    <div className="lobby-page page">
       <Row justify="space-between" align="middle">
         <Col flex="3">
-          <div className="page-title">Раздевалка</div>
+          <div className="page__title">Раздевалка</div>
         </Col>
         <Col flex="1">
-          <Link to="/rules">
+          <Link to={`/${gameState.gameId}/rules`}>
             <Button
               className="text-uppercase"
               type="primary"
@@ -23,8 +25,9 @@ const Lobby: React.FC = () => {
         </Col>
       </Row>
 
-      <div className="page-description">Настройка пользователя</div>
-      <div className="page-content">
+      <div className="page__description">Настройка игорока</div>
+      <div className="page__content"></div>
+      <div className="page__footer">
         <Link to="/categories">
           <Button
             className="mt-2 text-uppercase"
