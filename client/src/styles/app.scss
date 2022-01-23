@@ -5,3 +5,30 @@
   max-width: 1024px;
   margin: 0 auto;
 }
+
+.default-layout {
+  padding: 30px;
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  color: #3f414e;
+}
+
+.page-description {
+  font-style: normal;
+  font-weight: lighter;
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  color: #a1a4b2;
+  padding: 1rem 0;
+}
+
+.page-content {
+  margin-top: 60px;
+}
