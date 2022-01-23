@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { io } from "socket.io-client";
+import { observer } from "mobx-react";
 
 import EmptyLayout from "./layouts/EmptyLayout";
 import DefaultLayout from "./layouts/DefaultLayout";
@@ -14,12 +15,14 @@ import appState from "./store/appState";
 
 const SERVER_URL = "http://localhost:5000";
 
-const App: React.FC = () => {
+const App: React.FC = observer(() => {
   useEffect(() => {
     const socket = io(`${SERVER_URL}/game`);
     appState.setSocket(socket);
 
-    socket.on("game:created", gameState.setGameId);
+    socket.on("game:created", (payload: string) => {
+      gameState.setGameId(payload);
+    });
   }, []);
 
   const publicRoutes = (
@@ -44,6 +47,6 @@ const App: React.FC = () => {
       </Routes>
     </div>
   );
-};
+});
 
 export default App;

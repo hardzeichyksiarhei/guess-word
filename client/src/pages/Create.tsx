@@ -1,11 +1,12 @@
 import React from "react";
 import { Button, Form, Input } from "antd";
+import { observer } from "mobx-react";
 
 import "../styles/create.scss";
 import appState from "../store/appState";
 
 
-const Create: React.FC = () => {
+const Create: React.FC = observer(() => {
   const onFinish = (values: any) => {
     if (!appState.socket) return;
 
@@ -25,6 +26,6 @@ const Create: React.FC = () => {
       </Form.Item>
     </Form>
   );
-};
+});
 
 export default Create;
