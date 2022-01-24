@@ -11,13 +11,16 @@ const EditPlayer: React.FC = observer(() => {
     playerState.updateCurrentPlayer(changedValues);
   };
 
-  useEffect(() => form.resetFields(), [playerState.currentPlayer]);
+  useEffect(() => {
+    form.setFieldsValue({
+      nickname: playerState.currentPlayer.nickname,
+    });
+  }, [playerState.currentPlayer]);
 
   return (
     <Form
       form={form}
       layout="vertical"
-      initialValues={playerState.currentPlayer}
       onValuesChange={onValuesChange}
     >
       <Form.Item
