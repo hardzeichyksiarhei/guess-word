@@ -5,25 +5,9 @@ class PlayerState {
   currentPlayer: IPlayer = {
     nickname: "Твоя МаМка ЕпТа",
     avatar: null,
-    isOwner: true,
+    isOwner: false,
   };
-  players: IPlayer[] = [
-    {
-      nickname: "pupsik",
-      avatar: null,
-      isOwner: false,
-    },
-    {
-      nickname: "luntik",
-      avatar: null,
-      isOwner: false,
-    },
-    {
-      nickname: "opasniy",
-      avatar: null,
-      isOwner: false,
-    },
-  ];
+  players: IPlayer[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -42,7 +26,15 @@ class PlayerState {
   }
 
   setPlayers(players: IPlayer[]) {
-    this.players = players;
+    const currentPlayerId = JSON.parse(
+      localStorage.getItem("currentPlayerId") || ""
+    );
+
+    const currentPlayer = players.find(
+      (player) => player.id === currentPlayerId
+    );
+    if (currentPlayer) this.currentPlayer = currentPlayer;
+    this.players = players.filter((player) => player.id !== currentPlayerId);
   }
 }
 

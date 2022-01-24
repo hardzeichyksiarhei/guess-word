@@ -1,12 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Row, Col, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import gameState from "../store/gameState";
 import EditPlayer from "../components/EditPlayer";
 import PlayersList from "../components/PlayersList";
 
-const Lobby: React.FC = () => {
+import appState from "../store/appState";
+import playerState from "../store/playerState";
+
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { observer } from "mobx-react";
+
+const Lobby: React.FC = observer(() => {
+  const params = useParams();
+  const [gameId, setGameId] = useLocalStorage('gameId')
+
+  useEffect(() => {
+    if (!params.gameId) return;
+
+    gameState.setGameId(params.gameId);
+    setGameId(params.gameId)
+
+  }, [params.gameId]);
+
+  const handleClickNextStep = () => {
+    if (!appState.socket) return;
+
+    appState.socket.emit("game:join", {
+      ...playerState.currentPlayer,
+      gameId: gameState.gameId,
+    });
+  };
+
+  if (!gameState.gameId) return null;
+
   return (
     <div className="lobby-page page">
       <Row justify="space-between" align="middle">
@@ -32,7 +60,7 @@ const Lobby: React.FC = () => {
         <Row gutter={30}>
           <Col span={14}>
             <h4>Вы</h4>
-            <EditPlayer  />
+            <EditPlayer />
           </Col>
           <Col span={10}>
             <h4>Игроки</h4>
@@ -41,19 +69,19 @@ const Lobby: React.FC = () => {
         </Row>
       </div>
       <div className="page__footer">
-        <Link to="/categories">
-          <Button
-            className="mt-2 text-uppercase"
-            type="primary"
-            shape="round"
-            block
-          >
-            Далее
-          </Button>
-        </Link>
+        <Button
+          className="mt-2 text-uppercase"
+          type="primary"
+          shape="round"
+          disabled={!!playerState.currentPlayer.id}
+          onClick={handleClickNextStep}
+          block
+        >
+          Далее
+        </Button>
       </div>
     </div>
   );
-};
+});
 
 export default Lobby;

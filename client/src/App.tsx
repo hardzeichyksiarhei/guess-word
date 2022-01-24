@@ -11,44 +11,56 @@ import Connect from "./pages/Connect";
 import Lobby from "./pages/Lobby";
 import Rules from "./pages/Rules";
 
-import gameState from "./store/gameState";
 import appState from "./store/appState";
 import playerState from "./store/playerState";
+import { IPlayer } from "./interfaces/playerInterface";
+
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
 const SERVER_URL = "http://localhost:5000";
 
 const App: React.FC = observer(() => {
   const navigate = useNavigate();
+  const [_, setCurrentPlayerId] = useLocalStorage("currentPlayerId");
 
   useEffect(() => {
     const socket = io(`${SERVER_URL}/game`);
     appState.setSocket(socket);
 
-    socket.on("game:created", (payload: string) => {
-      navigate(`/${payload}/lobby`);
-      gameState.setGameId(payload);
+    socket.on("game:created", (gameId: string) => {
+      navigate(`/${gameId}`);
       playerState.updateCurrentPlayer({ isOwner: true });
+    });
+
+    socket.on("game:joined", (player: IPlayer) => {
+      playerState.setPlayers([...playerState.players, player]);
+    });
+
+    socket.on("game:self:joined", (playerId: string) => {
+      playerState.updateCurrentPlayer({ id: playerId });
+      setCurrentPlayerId(playerId);
+    });
+
+    socket.on("game:player:listed", (players: IPlayer[]) => {
+      playerState.setPlayers(players);
     });
   }, []);
 
-  const publicRoutes = (
-    <Route path="/" element={<EmptyLayout />}>
-      <Route index element={<Welcome />} />
-      <Route path="create" element={<Create />} />
-      <Route path="connect" element={<Connect />} />
-      <Route path="*" element={<Welcome />} />
-    </Route>
+  const routes = (
+    <>
+      <Route path="/" element={<EmptyLayout />}>
+        <Route index element={<Welcome />} />
+        <Route path="create" element={<Create />} />
+        <Route path="connect" element={<Connect />} />
+        <Route path="*" element={<Welcome />} />
+      </Route>
+      <Route path="/:gameId" element={<DefaultLayout />}>
+        <Route index element={<Lobby />} />
+        <Route path="rules" element={<Rules />} />
+        <Route path="*" element={<Lobby />} />
+      </Route>
+    </>
   );
-
-  const privateRoutes = (
-    <Route path="/:gameId" element={<DefaultLayout />}>
-      <Route index element={<Lobby />} />
-      <Route path="rules" element={<Rules />} />
-      <Route path="*" element={<Lobby />} />
-    </Route>
-  );
-
-  const routes = !gameState.gameId ? publicRoutes : privateRoutes;
 
   return (
     <div className="app">
