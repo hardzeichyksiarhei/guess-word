@@ -49,6 +49,7 @@ const App: React.FC = observer(() => {
     });
 
     socket.on("disconnect", () => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const routes = (

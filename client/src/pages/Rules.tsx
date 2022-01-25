@@ -1,6 +1,6 @@
 import React from "react";
 import { Row, Col, Button } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Rules: React.FC = () => {
   const navigate = useNavigate();
