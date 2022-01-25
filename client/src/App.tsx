@@ -16,13 +16,13 @@ import playerState from "./store/playerState";
 
 import { IPlayer } from "./interfaces/playerInterface";
 
-const SERVER_URL = "http://localhost:5000";
+import { SERVER_API_URL } from "./config";
 
 const App: React.FC = observer(() => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io(`${SERVER_URL}/game`);
+    const socket = io(`${SERVER_API_URL}/game`);
     appState.setSocket(socket);
 
     socket.on("game:created", (gameId: string) => {
@@ -45,7 +45,7 @@ const App: React.FC = observer(() => {
 
     socket.on("game:leaved", () => {
       playerState.resetPlayer();
-      navigate('/');
+      navigate("/");
     });
 
     socket.on("disconnect", () => {});
