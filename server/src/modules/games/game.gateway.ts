@@ -17,7 +17,7 @@ import { UpdatePlayerDto } from '../player/dto/update-player.dto';
 import { PlayerDto } from '../player/dto/player.dto';
 import { CreateGameDto } from './dto/create-game.dto';
 
-@WebSocketGateway({ namespace: 'game', cors: true })
+@WebSocketGateway({ namespace: 'game', cors: true, transports: ['websocket'] })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
