@@ -22,7 +22,7 @@ const App: React.FC = observer(() => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io(`${SERVER_API_URL}/game`);
+    const socket = io(`${SERVER_API_URL}/game`, { transports: ["websocket"] });
     appState.setSocket(socket);
 
     socket.on("game:created", (gameId: string) => {
@@ -49,7 +49,7 @@ const App: React.FC = observer(() => {
     });
 
     socket.on("disconnect", () => {});
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const routes = (
