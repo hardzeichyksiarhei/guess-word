@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
+import { observer } from "mobx-react";
 import { Row, Col, Button } from "antd";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 
 import gameState from "../store/gameState";
 import EditPlayer from "../components/EditPlayer";
@@ -9,53 +10,84 @@ import PlayersList from "../components/PlayersList";
 import appState from "../store/appState";
 import playerState from "../store/playerState";
 
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { observer } from "mobx-react";
+import { IPlayer } from "../interfaces/playerInterface";
+
+interface LocationState {
+  isCreated: boolean;
+}
 
 const Lobby: React.FC = observer(() => {
   const params = useParams();
-  const [gameId, setGameId] = useLocalStorage('gameId')
+  const location = useLocation();
+
+  const { isCreated } = (location.state || {}) as LocationState;
 
   useEffect(() => {
     if (!params.gameId) return;
-
-    gameState.setGameId(params.gameId);
-    setGameId(params.gameId)
-
-  }, [params.gameId]);
-
-  const handleClickNextStep = () => {
     if (!appState.socket) return;
 
-    appState.socket.emit("game:join", {
-      ...playerState.currentPlayer,
-      gameId: gameState.gameId,
-    });
+    const gameId = params.gameId;
+    const player = { ...playerState.currentPlayer, gameId };
+    if (isCreated) player.isOwner = true;
+
+    appState.socket.emit("game:player:list", gameId);
+    appState.socket.emit("game:join", player);
+    playerState.setCurrentPlayer(player);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.gameId, appState.socket]);
+
+  const handleToggleReady = () => {
+    if (!appState.socket) return;
+
+    const { isReady, ...player } = playerState.currentPlayer;
+    const user: IPlayer = { ...player, isReady: !isReady };
+    appState.socket.emit("game:player:edit", user);
   };
 
-  if (!gameState.gameId) return null;
+  const handleClickExit = () => {
+    if (!appState.socket) return;
+    appState.socket.emit("game:leave", playerState.currentPlayer);
+  };
+
+  if (!playerState.currentPlayer.gameId) return null;
 
   return (
     <div className="lobby-page page">
       <Row justify="space-between" align="middle">
-        <Col flex="3">
+        <Col flex="2">
           <div className="page__title">Раздевалка</div>
         </Col>
         <Col flex="1">
-          <Link to={`/${gameState.gameId}/rules`}>
-            <Button
-              className="text-uppercase"
-              type="primary"
-              shape="round"
-              block
-            >
-              Правила
-            </Button>
-          </Link>
+          <Row gutter={20}>
+            <Col flex="2">
+              <Link to={`/${gameState.gameId}/rules`}>
+                <Button
+                  className="text-uppercase"
+                  type="primary"
+                  shape="round"
+                  block
+                >
+                  Правила
+                </Button>
+              </Link>
+            </Col>
+            <Col flex="1">
+              <Button
+                className="text-uppercase"
+                type="primary"
+                shape="round"
+                onClick={handleClickExit}
+                block
+                danger
+              >
+                Выйти
+              </Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
 
-      <div className="page__description">Настройка игорока</div>
+      <div className="page__description">Настройка игрока</div>
       <div className="page__content">
         <Row gutter={30}>
           <Col span={14}>
@@ -73,11 +105,11 @@ const Lobby: React.FC = observer(() => {
           className="mt-2 text-uppercase"
           type="primary"
           shape="round"
-          disabled={!!playerState.currentPlayer.id}
-          onClick={handleClickNextStep}
+          onClick={handleToggleReady}
           block
+          danger={playerState.currentPlayer.isReady}
         >
-          Далее
+          {playerState.currentPlayer.isReady ? "Не готов" : "Готов"}
         </Button>
       </div>
     </div>

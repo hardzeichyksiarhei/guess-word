@@ -13,37 +13,42 @@ import Rules from "./pages/Rules";
 
 import appState from "./store/appState";
 import playerState from "./store/playerState";
-import { IPlayer } from "./interfaces/playerInterface";
 
-import { useLocalStorage } from "./hooks/useLocalStorage";
+import { IPlayer } from "./interfaces/playerInterface";
 
 const SERVER_URL = "http://localhost:5000";
 
 const App: React.FC = observer(() => {
   const navigate = useNavigate();
-  const [_, setCurrentPlayerId] = useLocalStorage("currentPlayerId");
 
   useEffect(() => {
     const socket = io(`${SERVER_URL}/game`);
     appState.setSocket(socket);
 
     socket.on("game:created", (gameId: string) => {
-      navigate(`/${gameId}`);
-      playerState.updateCurrentPlayer({ isOwner: true });
+      navigate(`/${gameId}`, { state: { isCreated: true } });
+      const user = { ...playerState.currentPlayer, gameId, isOwner: true };
+      playerState.setCurrentPlayer(user);
     });
 
     socket.on("game:joined", (player: IPlayer) => {
       playerState.setPlayers([...playerState.players, player]);
     });
 
-    socket.on("game:self:joined", (playerId: string) => {
-      playerState.updateCurrentPlayer({ id: playerId });
-      setCurrentPlayerId(playerId);
+    socket.on("game:self:joined", (player: IPlayer) => {
+      playerState.setCurrentPlayer(player);
     });
 
     socket.on("game:player:listed", (players: IPlayer[]) => {
       playerState.setPlayers(players);
     });
+
+    socket.on("game:leaved", () => {
+      playerState.resetPlayer();
+      navigate('/');
+    });
+
+    socket.on("disconnect", () => {});
   }, []);
 
   const routes = (

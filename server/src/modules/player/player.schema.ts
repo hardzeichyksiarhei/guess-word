@@ -1,12 +1,15 @@
 import * as mongoose from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import { Game } from '../games/game.schema';
+import { IPlayerDocument } from './player.interface';
 
 @Schema({ timestamps: true })
 export class Player {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Game' })
-  gameId: Game;
+  gameId: string;
+
+  @Prop()
+  sessionId: string;
 
   @Prop()
   nickname: string;
@@ -17,9 +20,26 @@ export class Player {
   @Prop()
   isOwner: boolean;
 
-  static toResponse({ _id, gameId, nickname, isOwner, avatar }) {
-    return { id: _id, gameId, nickname, isOwner, avatar };
+  @Prop()
+  isReady: boolean;
+
+  static toResponse({
+    id,
+    gameId,
+    sessionId,
+    nickname,
+    avatar,
+    isOwner,
+    isReady,
+  }) {
+    return { id, gameId, sessionId, nickname, avatar, isOwner, isReady };
   }
 }
 
 export const PlayerSchema = SchemaFactory.createForClass(Player);
+
+PlayerSchema.virtual('id').get(function virtualId(this: IPlayerDocument) {
+  return this._id.toHexString();
+});
+
+PlayerSchema.set('toJSON', { virtuals: true });

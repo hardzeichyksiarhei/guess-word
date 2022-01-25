@@ -1,12 +1,12 @@
 import { Document } from 'mongoose';
 
-import { IGame } from '../games/game.interface';
-
 export interface IPlayer {
-  gameId: IGame;
+  gameId: string;
+  sessionId: string | null;
   nickname: string;
   avatar: string | null;
   isOwner: boolean;
+  isReady: boolean;
 }
 
 export interface IPlayerDocument extends IPlayer, Document {

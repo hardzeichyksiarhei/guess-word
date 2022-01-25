@@ -1,27 +1,27 @@
-import React, { useEffect } from "react";
-import { Form, Input } from "antd";
-import playerState from "../store/playerState";
+import React from "react";
+import { Button, Form, Input } from "antd";
 import { observer } from "mobx-react";
 
+import appState from "../store/appState";
+
 import { IPlayer } from "../interfaces/playerInterface";
+import playerState from "../store/playerState";
 
 const EditPlayer: React.FC = observer(() => {
-  const [form] = Form.useForm();
-  const onValuesChange = (changedValues: Partial<IPlayer>) => {
-    playerState.updateCurrentPlayer(changedValues);
+  const onFinish = (values: Partial<IPlayer>) => {
+    if (!appState.socket) return;
+    const { id } = playerState.currentPlayer;
+    appState.socket.emit("game:player:edit", { id, ...values });
   };
-
-  useEffect(() => {
-    form.setFieldsValue({
-      nickname: playerState.currentPlayer.nickname,
-    });
-  }, [playerState.currentPlayer]);
 
   return (
     <Form
-      form={form}
       layout="vertical"
-      onValuesChange={onValuesChange}
+      initialValues={{
+        id: playerState.currentPlayer.id,
+        nickname: playerState.currentPlayer.nickname,
+      }}
+      onFinish={onFinish}
     >
       <Form.Item
         label="Псевдоним"
@@ -29,6 +29,16 @@ const EditPlayer: React.FC = observer(() => {
         rules={[{ required: true, message: "Please input your nickname!" }]}
       >
         <Input />
+      </Form.Item>
+      <Form.Item>
+        <Button
+          className="text-uppercase"
+          htmlType="submit"
+          type="primary"
+          shape="round"
+        >
+          <b>Сохранить</b>
+        </Button>
       </Form.Item>
     </Form>
   );

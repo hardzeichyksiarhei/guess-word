@@ -1,20 +1,41 @@
-import React from "react";
-import { Button, Form, Input } from "antd";
+import React, { useEffect } from "react";
+import { Col, Row } from "antd";
+
+import appState from "../store/appState";
+import gameState from "../store/gameState";
+
+import { IGame } from "../interfaces/gameInterface";
+import GameList from "../components/GameList";
 
 const Connect: React.FC = () => {
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
-  };
+  useEffect(() => {
+    if (!appState.socket) return;
+
+    appState.socket.emit("game:list").on("game:listed", (games: IGame[]) => {
+      console.log(games);
+      gameState.setGames(games);
+    });
+    return () => {
+      gameState.setGames([]);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appState.socket]);
 
   return (
-    <Form layout="vertical" onFinish={onFinish}>
-      <Form.Item label="Как будет называться игра?">
-        <Input placeholder="Введите название игры..." />
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary">Submit</Button>
-      </Form.Item>
-    </Form>
+    <div className="lobby-page page">
+      <Row justify="space-between" align="middle">
+        <Col flex="2">
+          <div className="page__title">Игры</div>
+          <div className="page__content">
+            <Row>
+              <Col flex="1">
+                <GameList />
+              </Col>
+            </Row>
+          </div>
+        </Col>
+      </Row>
+    </div>
   );
 };
 
