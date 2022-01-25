@@ -22,7 +22,7 @@ const App: React.FC = observer(() => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io(`${SERVER_API_URL}/game`);
+    const socket = io(`${SERVER_API_URL}/game`, { transports: ['websocket'] });
     appState.setSocket(socket);
 
     socket.on("game:created", (gameId: string) => {
