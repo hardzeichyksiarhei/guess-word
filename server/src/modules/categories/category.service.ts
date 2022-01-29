@@ -18,4 +18,9 @@ export class CategoryService {
     const category = new this.model(createCategoryDto);
     return category.save();
   }
+
+  async findAll() {
+    const categories = await this.model.find({});
+    return categories;
+  }
 }

@@ -19,8 +19,8 @@ export class Category {
     },
   ];
 
-  static toResponse({ id, slug, label }) {
-    return { id, slug, label };
+  static toResponse({ id, slug, label, words }) {
+    return { id, slug, label, words };
   }
 }
 
