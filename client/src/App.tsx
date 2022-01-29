@@ -9,6 +9,7 @@ import Create from "./pages/Create";
 import Connect from "./pages/Connect";
 import Lobby from "./pages/Lobby";
 import Rules from "./pages/Rules";
+import Settings from "./pages/Settings";
 
 import appState from "./store/appState";
 import playerState from "./store/playerState";
@@ -47,6 +48,7 @@ const App: React.FC = observer(() => {
         <Route index element={<Welcome />} />
         <Route path="create" element={<Create />} />
         <Route path="connect" element={<Connect />} />
+        <Route path="settings" element={<Settings />} />
         <Route path="*" element={<Welcome />} />
       </Route>
       <Route path="/:gameId" element={<DefaultLayout />}>

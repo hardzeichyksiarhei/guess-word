@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Row, Col, Button } from "antd";
-import { Link, useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
+import Toolbar from "../components/Toolbar";
 import EditPlayer from "../components/EditPlayer";
 import PlayersList from "../components/PlayersList";
 
@@ -10,7 +11,6 @@ import appState from "../store/appState";
 import playerState from "../store/playerState";
 
 import { IPlayer } from "../interfaces/playerInterface";
-import ExitButton from "../components/ExitButton";
 
 interface LocationState {
   isCreated: boolean;
@@ -44,32 +44,8 @@ const Lobby: React.FC = observer(() => {
 
   return (
     <div className="lobby-page page">
-      <Row justify="space-between" align="middle">
-        <Col flex="2">
-          <div className="page__title">Раздевалка</div>
-        </Col>
-        <Col flex="1">
-          <Row gutter={20}>
-            <Col flex="2">
-              <Link to={`/${playerState.currentPlayer.gameId}/rules`}>
-                <Button
-                  className="text-uppercase"
-                  type="primary"
-                  shape="round"
-                  block
-                >
-                  Правила
-                </Button>
-              </Link>
-            </Col>
-            <Col flex="1">
-              <ExitButton />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+      <Toolbar className="page__toolbar" title="Раздевалка" description="Настройка игрока" />
 
-      <div className="page__description">Настройка игрока</div>
       <div className="page__content">
         <Row gutter={30}>
           <Col span={14}>
