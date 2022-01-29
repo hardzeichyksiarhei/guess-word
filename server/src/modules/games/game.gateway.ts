@@ -88,6 +88,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     const players = await this.playerService.findAllByGameId(gameId);
     this.server
+      .to(client.id)
+      .emit('game:self:joined', Player.toResponse(player));
+    this.server
       .to(gameId)
       .emit('game:player:listed', players.map(Player.toResponse));
   }

@@ -41,13 +41,14 @@ class PlayerState {
   setCurrentPlayer(currentPlayer: IPlayer) {
     this.currentPlayer = currentPlayer;
 
-    localStorage.setItem("currentPlayer", JSON.stringify(this.currentPlayer));
+    localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer));
   }
 
   updateCurrentPlayer(payload: Partial<IPlayer>) {
-    this.currentPlayer = { ...this.currentPlayer, ...payload };
+    const currentPlayer = { ...this.currentPlayer, ...payload };
+    this.currentPlayer = currentPlayer;
 
-    localStorage.setItem("currentPlayer", JSON.stringify(this.currentPlayer));
+    localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer));
   }
 
   setPlayers(players: IPlayer[]) {

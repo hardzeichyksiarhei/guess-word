@@ -25,10 +25,6 @@ const App: React.FC = observer(() => {
       playerState.setCurrentPlayer(user);
     });
 
-    appState.socket.on("game:joined", (player: IPlayer) => {
-      playerState.setPlayers([...playerState.players, player]);
-    });
-
     appState.socket.on("game:self:joined", (player: IPlayer) => {
       playerState.setCurrentPlayer(player);
     });

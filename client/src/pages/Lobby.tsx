@@ -103,7 +103,9 @@ const Lobby: React.FC = observer(() => {
                 type="primary"
                 shape="round"
                 block
-                disabled={!playerState.isAllPlayersReady}
+                disabled={
+                  !playerState.isAllPlayersReady || !playerState.players.length
+                }
               >
                 Далее
               </Button>

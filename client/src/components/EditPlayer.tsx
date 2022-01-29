@@ -9,7 +9,6 @@ import playerState from "../store/playerState";
 
 const EditPlayer: React.FC = observer(() => {
   const onFinish = (values: Partial<IPlayer>) => {
-    if (!appState.socket) return;
     const { id } = playerState.currentPlayer;
     appState.socket.emit("game:player:edit", { id, ...values });
   };
