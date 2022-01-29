@@ -17,7 +17,16 @@ export class GameService {
     return game.save();
   }
 
+  async findById(id: string): Promise<IGameDocument> {
+    return this.model.findById(id).exec();
+  }
+
   async findAll(): Promise<Game[]> {
     return this.model.find().exec();
+  }
+
+  async deleteById(id: string) {
+    const game = await this.model.findById(id).exec();
+    return game.deleteOne();
   }
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Form, Input } from "antd";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
 import "../styles/create.scss";
 import appState from "../store/appState";

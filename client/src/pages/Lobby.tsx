@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { Row, Col, Button } from "antd";
 import { Link, useParams, useLocation } from "react-router-dom";
 
-import gameState from "../store/gameState";
 import EditPlayer from "../components/EditPlayer";
 import PlayersList from "../components/PlayersList";
 
@@ -11,6 +10,7 @@ import appState from "../store/appState";
 import playerState from "../store/playerState";
 
 import { IPlayer } from "../interfaces/playerInterface";
+import ExitButton from "../components/ExitButton";
 
 interface LocationState {
   isCreated: boolean;
@@ -24,7 +24,6 @@ const Lobby: React.FC = observer(() => {
 
   useEffect(() => {
     if (!params.gameId) return;
-    if (!appState.socket) return;
 
     const gameId = params.gameId;
     const player = { ...playerState.currentPlayer, gameId };
@@ -33,20 +32,12 @@ const Lobby: React.FC = observer(() => {
     appState.socket.emit("game:player:list", gameId);
     appState.socket.emit("game:join", player);
     playerState.setCurrentPlayer(player);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.gameId, appState.socket]);
+  }, [params.gameId, isCreated]);
 
   const handleToggleReady = () => {
-    if (!appState.socket) return;
-
     const { isReady, ...player } = playerState.currentPlayer;
     const user: IPlayer = { ...player, isReady: !isReady };
     appState.socket.emit("game:player:edit", user);
-  };
-
-  const handleClickExit = () => {
-    if (!appState.socket) return;
-    appState.socket.emit("game:leave", playerState.currentPlayer);
   };
 
   if (!playerState.currentPlayer.gameId) return null;
@@ -60,7 +51,7 @@ const Lobby: React.FC = observer(() => {
         <Col flex="1">
           <Row gutter={20}>
             <Col flex="2">
-              <Link to={`/${gameState.gameId}/rules`}>
+              <Link to={`/${playerState.currentPlayer.gameId}/rules`}>
                 <Button
                   className="text-uppercase"
                   type="primary"
@@ -72,16 +63,7 @@ const Lobby: React.FC = observer(() => {
               </Link>
             </Col>
             <Col flex="1">
-              <Button
-                className="text-uppercase"
-                type="primary"
-                shape="round"
-                onClick={handleClickExit}
-                block
-                danger
-              >
-                Выйти
-              </Button>
+              <ExitButton />
             </Col>
           </Row>
         </Col>
@@ -101,16 +83,33 @@ const Lobby: React.FC = observer(() => {
         </Row>
       </div>
       <div className="page__footer">
-        <Button
-          className="mt-2 text-uppercase"
-          type="primary"
-          shape="round"
-          onClick={handleToggleReady}
-          block
-          danger={playerState.currentPlayer.isReady}
-        >
-          {playerState.currentPlayer.isReady ? "Не готов" : "Готов"}
-        </Button>
+        <Row gutter={20}>
+          <Col flex={1}>
+            <Button
+              className="mt-2 text-uppercase"
+              type="primary"
+              shape="round"
+              onClick={handleToggleReady}
+              block
+              danger={playerState.currentPlayer.isReady}
+            >
+              {playerState.currentPlayer.isReady ? "Не готов" : "Готов"}
+            </Button>
+          </Col>
+          {playerState.currentPlayer.isOwner ? (
+            <Col flex={1}>
+              <Button
+                className="mt-2 text-uppercase"
+                type="primary"
+                shape="round"
+                block
+                disabled={!playerState.isAllPlayersReady}
+              >
+                Далее
+              </Button>
+            </Col>
+          ) : null}
+        </Row>
       </div>
     </div>
   );

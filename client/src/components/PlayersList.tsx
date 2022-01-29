@@ -1,7 +1,7 @@
 import React from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { Avatar, Button, List } from "antd";
-import { StarFilled } from "@ant-design/icons";
+import { BulbFilled, StarFilled, DeleteFilled } from "@ant-design/icons";
 
 import playerState from "../store/playerState";
 import { IPlayer } from "../interfaces/playerInterface";
@@ -34,6 +34,13 @@ const PlayersList: React.FC = observer(() => {
       dataSource={playerState.getPlayers}
       renderItem={(player, idx) => (
         <List.Item>
+          <BulbFilled
+            style={{
+              marginRight: 5,
+              fontSize: 16,
+              color: player.isReady ? "orange" : "lightgray",
+            }}
+          />
           <List.Item.Meta
             avatar={
               <Avatar
@@ -45,7 +52,7 @@ const PlayersList: React.FC = observer(() => {
               (
                 <span>
                   {player.isOwner ? (
-                    <StarFilled style={{ color: "orange" }} />
+                    <StarFilled style={{ marginRight: 5, color: "orange" }} />
                   ) : player.id === playerState.currentPlayer.id ? (
                     <b>Вы – </b>
                   ) : null}
@@ -57,19 +64,14 @@ const PlayersList: React.FC = observer(() => {
           />
           {playerState.currentPlayer.isOwner && !player.isOwner ? (
             <Button
-              type="dashed"
+              type="primary"
               size="small"
               onClick={() => handleDeletePlayer(player)}
               danger
             >
-              Удалить
+              <DeleteFilled />
             </Button>
           ) : null}
-          {player.isReady ? (
-            <b style={{ padding: "4px 15px" }}>Готов</b>
-          ) : (
-            <b style={{ padding: "4px 15px" }}>Не готов</b>
-          )}
         </List.Item>
       )}
     />

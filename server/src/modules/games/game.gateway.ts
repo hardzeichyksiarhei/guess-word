@@ -6,13 +6,13 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { Types } from 'mongoose';
 
 import { Player } from '../player/player.schema';
 import { PlayerService } from '../player/player.service';
 import { Game } from './game.schema';
 import { GameService } from './game.service';
 
-import { CreatePlayerDto } from '../player/dto/create-player.dto';
 import { UpdatePlayerDto } from '../player/dto/update-player.dto';
 import { PlayerDto } from '../player/dto/player.dto';
 import { CreateGameDto } from './dto/create-game.dto';
@@ -73,26 +73,50 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('game:join')
-  async handleGameJoin(
-    client: Socket,
-    payload: CreatePlayerDto & { id: string },
-  ): Promise<void> {
-    let player = await this.playerService.findById(payload.id);
-    if (!player) {
-      player = await this.playerService.create(payload);
-    }
-    player.sessionId = client.id;
-    await player.save();
+  async handleGameJoin(client: Socket, payload: PlayerDto): Promise<void> {
+    const game = await this.gameService.findById(payload.gameId);
+    if (!game) return;
 
-    client.join(String(player.gameId));
+    const player = await this.playerService.findOneAndUpdate(
+      { _id: payload.id || new Types.ObjectId() },
+      { ...payload, sessionId: client.id },
+      { upsert: true, new: true },
+    );
 
-    const players = await this.playerService.findAllByGameId(player.gameId);
+    const gameId = player.gameId.toString();
+    client.join(gameId);
+
+    const players = await this.playerService.findAllByGameId(gameId);
     this.server
-      .to(String(player.gameId))
+      .to(gameId)
       .emit('game:player:listed', players.map(Player.toResponse));
-    this.server
-      .to(client.id)
-      .emit('game:self:joined', Player.toResponse(player));
+  }
+
+  @SubscribeMessage('game:owner-leave')
+  async handleGameOwnerLeave(
+    client: Socket,
+    payload: PlayerDto,
+  ): Promise<void> {
+    if (!payload.isOwner) return;
+
+    try {
+      const gameId = payload.gameId.toString();
+
+      const players = await this.playerService.findAllByGameId(gameId);
+
+      this.server.socketsLeave(gameId);
+      await this.gameService.deleteById(gameId);
+      await this.playerService.deleteByGameId(gameId);
+
+      const games = await this.gameService.findAll();
+
+      this.server.emit('game:listed', games);
+      players.forEach(({ sessionId }) =>
+        this.server.to(sessionId).emit('game:leaved'),
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @SubscribeMessage('game:leave')
@@ -100,13 +124,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const sockets = this.server.sockets as any;
     const socket = sockets.get(payload.sessionId);
 
+    const gameId = payload.gameId.toString();
+    socket.leave(gameId);
     await this.playerService.deleteById(payload.id);
-    socket.leave(String(payload.gameId));
 
-    const players = await this.playerService.findAllByGameId(payload.gameId);
+    const players = await this.playerService.findAllByGameId(gameId);
 
     this.server
-      .in(String(payload.gameId))
+      .in(gameId)
       .emit('game:player:listed', players.map(Player.toResponse));
     this.server.to(socket.id).emit('game:leaved');
   }

@@ -34,6 +34,10 @@ class PlayerState {
     return [ownerPlayer, ...otherPlayers];
   }
 
+  get isAllPlayersReady() {
+    return this.players.every((player) => player.isReady);
+  }
+
   setCurrentPlayer(currentPlayer: IPlayer) {
     this.currentPlayer = currentPlayer;
 

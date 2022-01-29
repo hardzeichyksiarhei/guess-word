@@ -1,7 +1,8 @@
 .welcome-page {
   display: flex;
   flex-direction: column;
-  &__app-logo {
+  min-height: calc(100vh - 108px);
+  &__logo {
     display: block;
     max-width: 500px;
     width: 100%;

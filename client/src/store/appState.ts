@@ -1,15 +1,15 @@
 import { makeAutoObservable } from "mobx";
-import { Socket } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
+
+import { SERVER_API_URL } from "../config";
 
 class AppState {
-  socket: Socket | null = null;
+  socket: Socket;
 
   constructor() {
     makeAutoObservable(this);
-  }
 
-  setSocket(socket: Socket) {
-    this.socket = socket;
+    this.socket = io(`${SERVER_API_URL}/game`, { transports: ["websocket"] });
   }
 }
 

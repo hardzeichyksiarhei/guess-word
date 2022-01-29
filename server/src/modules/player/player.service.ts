@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose';
 
 import { IPlayerDocument } from './player.interface';
 import { Player } from './player.schema';
@@ -17,6 +17,15 @@ export class PlayerService {
   async create(createPlayerDto: CreatePlayerDto) {
     const player = new this.model(createPlayerDto);
     return player.save();
+  }
+
+  async findOneAndUpdate(
+    filter: FilterQuery<IPlayerDocument>,
+    update: UpdateQuery<IPlayerDocument>,
+    options?: QueryOptions,
+  ) {
+    const player = this.model.findOneAndUpdate(filter, update, options);
+    return player;
   }
 
   async editById(id: string, updatePlayerDto: UpdatePlayerDto) {
@@ -47,6 +56,11 @@ export class PlayerService {
   }
 
   async deleteBySessionId(sessionId: string) {
-    return this.model.deleteOne({ sessionId }).exec();
+    const player = await this.model.findOne({ sessionId }).exec();
+    return player.deleteOne();
+  }
+
+  async deleteByGameId(gameId: string) {
+    return await this.model.deleteMany({ gameId }).exec();
   }
 }

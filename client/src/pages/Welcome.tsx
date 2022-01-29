@@ -9,7 +9,7 @@ const Welcome: React.FC = () => {
     <div className="welcome-page">
       <h2 className="welcome-page__game-name">Guess Word</h2>
       <img
-        className="welcome-page__app-logo"
+        className="welcome-page__logo"
         src="/img/app-logo.png"
         alt="Guess Word"
       />
@@ -22,14 +22,24 @@ const Welcome: React.FC = () => {
       <Row gutter={20}>
         <Col flex="2">
           <Link to="/create">
-            <Button className="text-uppercase" type="primary" shape="round" block>
+            <Button
+              className="text-uppercase"
+              type="primary"
+              shape="round"
+              block
+            >
               <b>Создать игру</b>
             </Button>
           </Link>
         </Col>
         <Col flex="1">
           <Link to="/connect">
-            <Button className="text-uppercase" type="default" shape="round" block>
+            <Button
+              className="text-uppercase"
+              type="default"
+              shape="round"
+              block
+            >
               Подключиться к игре
             </Button>
           </Link>
