@@ -93,6 +93,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server
       .to(gameId)
       .emit('game:player:listed', players.map(Player.toResponse));
+    this.server.to(gameId).emit('game:geted', Game.toResponse(game));
   }
 
   @SubscribeMessage('game:owner-leave')

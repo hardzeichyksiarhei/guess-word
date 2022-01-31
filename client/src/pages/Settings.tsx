@@ -1,10 +1,16 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import { Row, Col } from "antd";
 
 import Toolbar from "../components/Toolbar";
+import categoryState from "../store/categoryState";
+import CategoriesList from "../components/categories/CategoriesList";
 
-const Settings = () => {
+const Settings = observer(() => {
+  useEffect(() => {
+    categoryState.fetchCategories();
+  }, []);
+
   return (
     <div className="settings-page page">
       <Toolbar className="page__toolbar" title={"Настройки"} />
@@ -12,10 +18,7 @@ const Settings = () => {
       <div className="page__content">
         <Row gutter={30}>
           <Col span={24}>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Maiores
-            cum assumenda possimus, earum alias ratione repellendus quos, id,
-            beatae at porro voluptates natus pariatur vitae accusamus nisi quasi
-            mollitia doloremque.
+            <CategoriesList categories={categoryState.categories} />
           </Col>
         </Row>
       </div>
@@ -24,6 +27,6 @@ const Settings = () => {
       </div>
     </div>
   );
-};
+});
 
 export default Settings;

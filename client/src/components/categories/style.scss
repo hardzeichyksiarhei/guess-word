@@ -1,0 +1,12 @@
+.category-item {
+    cursor: pointer;
+    &__title {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        color: #fff;
+    }
+    &__image {
+        position: relative;
+    }
+}

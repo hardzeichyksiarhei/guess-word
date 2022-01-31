@@ -4,3 +4,5 @@ export interface ICategory {
   label: string;
   words: string[];
 }
+
+export type Category = Required<ICategory>;

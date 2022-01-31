@@ -15,6 +15,8 @@ import appState from "./store/appState";
 import playerState from "./store/playerState";
 
 import { IPlayer } from "./interfaces/playerInterface";
+import { IGame } from "./interfaces/gameInterface";
+import gameState from "./store/gameState";
 
 const App: React.FC = observer(() => {
   const navigate = useNavigate();
@@ -24,6 +26,10 @@ const App: React.FC = observer(() => {
       navigate(`/${gameId}`, { state: { isCreated: true } });
       const user = { ...playerState.currentPlayer, gameId, isOwner: true };
       playerState.setCurrentPlayer(user);
+    });
+
+    appState.socket.on("game:geted", (game: IGame) => {
+      gameState.setGame(game);
     });
 
     appState.socket.on("game:self:joined", (player: IPlayer) => {
@@ -40,7 +46,8 @@ const App: React.FC = observer(() => {
     });
 
     appState.socket.on("disconnect", () => {});
-  }, [navigate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const routes = (
     <>

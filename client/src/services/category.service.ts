@@ -1,8 +1,8 @@
 import axios from "../plugins/axios";
 
-import { ICategory } from "../interfaces/categoryInterface";
+import { Category } from "../interfaces/categoryInterface";
 
 export const getAll = async () => {
-  const { data } = await axios.get<Required<ICategory[]>>("categories");
+  const { data } = await axios.get<Category[]>("categories");
   return data;
 };

@@ -1,27 +1,39 @@
 import { makeAutoObservable } from "mobx";
 
-import { ICategory } from "../interfaces/categoryInterface";
-import { CategoryService, fakeRequest } from "../services";
+import { Category } from "../interfaces/categoryInterface";
+import { CategoryService } from "../services";
 
 class CategoryState {
-  categories: ICategory[] = [];
-  category: string | null = null;
+  categories: Category[] = [];
+  category: Category | null = null;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  setCategories(categories: ICategory[]) {
+  setCategories(categories: Category[]) {
     this.categories = categories;
   }
 
-  setCategory(category: string | null) {
+  setCategory(category: Category | null) {
     this.category = category;
+  }
+
+  toggleCategory(category: Category) {
+    if (!this.category) {
+      this.setCategory(category);
+      return;
+    }
+
+    if (this.category.id === category.id) this.setCategory(null);
+    else this.setCategory(category);
   }
 
   async fetchCategories() {
     try {
       const categories = await CategoryService.getAll();
+      console.log(categories);
+
       this.setCategories(categories);
     } catch (error) {
       console.log(error);

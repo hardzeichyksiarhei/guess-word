@@ -2,16 +2,16 @@ import React from "react";
 import { Button, Form, Input } from "antd";
 import { observer } from "mobx-react-lite";
 
-import "../styles/create.scss";
 import appState from "../store/appState";
 
+import { IGame } from "../interfaces/gameInterface";
+
+import "../styles/create.scss";
 
 const Create: React.FC = observer(() => {
-  const onFinish = (values: any) => {
-    if (!appState.socket) return;
-
-    console.log("Success:", values);
-    appState.socket.emit("game:create", values);
+  const onFinish = (values: Partial<IGame>) => {
+    const game = { ...values };
+    appState.socket.emit("game:create", game);
   };
 
   return (

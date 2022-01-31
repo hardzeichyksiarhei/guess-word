@@ -11,13 +11,15 @@ export class Category {
   @Prop()
   label: string;
 
-  @Prop()
-  words: [
-    {
-      type: mongoose.Schema.Types.ObjectId;
-      ref: 'Word';
-    },
-  ];
+  @Prop({
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Word',
+      },
+    ],
+  })
+  words: string[];
 
   static toResponse({ id, slug, label, words }) {
     return { id, slug, label, words };
