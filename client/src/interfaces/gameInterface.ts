@@ -1,11 +1,11 @@
-import { ICategory } from "./categoryInterface";
-
 export interface ISettings {
-  categories: ICategory[];
+  categories: string[];
 }
 
 export interface IGame {
-  id?: string;
+  id: string | null;
   name: string;
   settings: ISettings;
 }
+
+export interface Game extends Required<IGame> {}

@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import { Row, Col, Button } from "antd";
-import { useParams, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Toolbar from "../components/Toolbar";
 import EditPlayer from "../components/EditPlayer";
@@ -12,27 +12,8 @@ import playerState from "../store/playerState";
 
 import { IPlayer } from "../interfaces/playerInterface";
 
-interface LocationState {
-  isCreated: boolean;
-}
-
 const Lobby: React.FC = observer(() => {
-  const params = useParams();
-  const location = useLocation();
-
-  const { isCreated } = (location.state || {}) as LocationState;
-
-  useEffect(() => {
-    if (!params.gameId) return;
-
-    const gameId = params.gameId;
-    const player = { ...playerState.currentPlayer, gameId };
-    if (isCreated) player.isOwner = true;
-
-    appState.socket.emit("game:player:list", gameId);
-    appState.socket.emit("game:join", player);
-    playerState.setCurrentPlayer(player);
-  }, [params.gameId, isCreated]);
+  const navigate = useNavigate();
 
   const handleToggleReady = () => {
     const { isReady, ...player } = playerState.currentPlayer;
@@ -44,7 +25,11 @@ const Lobby: React.FC = observer(() => {
 
   return (
     <div className="lobby-page page">
-      <Toolbar className="page__toolbar" title="Раздевалка" description="Настройка игрока" />
+      <Toolbar
+        className="page__toolbar"
+        title="Раздевалка"
+        description="Настройка игрока"
+      />
 
       <div className="page__content">
         <Row gutter={30}>
@@ -83,6 +68,7 @@ const Lobby: React.FC = observer(() => {
                   !playerState.isAllPlayersReady ||
                   playerState.players.length < 2
                 }
+                onClick={() => navigate("settings")}
               >
                 Далее
               </Button>

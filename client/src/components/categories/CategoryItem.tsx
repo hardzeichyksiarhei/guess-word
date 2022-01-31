@@ -1,29 +1,24 @@
 import React from "react";
 import { Button, List } from "antd";
 
-import categoryState from "../../store/categoryState";
-
-import { Category } from "../../interfaces/categoryInterface";
+import { ICategory } from "../../interfaces/categoryInterface";
 
 import "./style.scss";
 import { observer } from "mobx-react-lite";
+import gameState from "../../store/gameState";
 
 interface CategoryItemProps {
-  category: Category;
+  category: ICategory;
 }
 
 const CategoryItem: React.FC<CategoryItemProps> = observer(({ category }) => {
-  const handleToggleCategory = (category: Category) => {
-    categoryState.toggleCategory(category);
-  };
-
   return (
     <List.Item>
       <List.Item.Meta
         avatar={
           <img
             className="category-item__image img-fluid"
-            src={`./img/categories/${category.slug}.jpg`}
+            src={`/img/categories/${category.slug}.jpg`}
             alt={category.slug}
           />
         }
@@ -32,10 +27,10 @@ const CategoryItem: React.FC<CategoryItemProps> = observer(({ category }) => {
       />
       <Button
         type="primary"
-        danger={categoryState.category?.id === category.id}
-        onClick={() => handleToggleCategory(category)}
+        danger={gameState.checkSelectedCategory(category)}
+        onClick={() => gameState.toggleGameCategory(category)}
       >
-        {categoryState.category?.id !== category.id ? "Выбрать" : "Отменить"}
+        {!gameState.checkSelectedCategory(category) ? "Выбрать" : "Отменить"}
       </Button>
     </List.Item>
   );

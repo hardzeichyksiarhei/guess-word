@@ -16,6 +16,7 @@ import { GameService } from './game.service';
 import { UpdatePlayerDto } from '../player/dto/update-player.dto';
 import { PlayerDto } from '../player/dto/player.dto';
 import { CreateGameDto } from './dto/create-game.dto';
+import { UpdateGameDto } from './dto/update-game.dto';
 
 @WebSocketGateway({ namespace: 'game', cors: true, transports: ['websocket'] })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -42,8 +43,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): Promise<void> {
     const game = await this.gameService.create(payload);
     const games = await this.gameService.findAll();
-    this.server.to(client.id).emit('game:created', game.id);
-    this.server.emit('game:listed', games);
+    this.server.to(client.id).emit('game:created', Game.toResponse(game));
+    this.server.emit('game:listed', games.map(Game.toResponse));
+  }
+
+  @SubscribeMessage('game:update')
+  async handleGameUpdate(
+    client: Socket,
+    payload: UpdateGameDto,
+  ): Promise<void> {
+    const game = await this.gameService.editById(payload.id, payload);
+    this.server.to(client.id).emit('game:updated', Game.toResponse(game));
   }
 
   @SubscribeMessage('game:list')
@@ -75,7 +85,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('game:join')
   async handleGameJoin(client: Socket, payload: PlayerDto): Promise<void> {
     const game = await this.gameService.findById(payload.gameId);
-    if (!game) return;
+    if (!game) {
+      this.server.to(client.id).emit('game:not-found');
+      return;
+    }
 
     const player = await this.playerService.findOneAndUpdate(
       { _id: payload.id || new Types.ObjectId() },
@@ -93,7 +106,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server
       .to(gameId)
       .emit('game:player:listed', players.map(Player.toResponse));
-    this.server.to(gameId).emit('game:geted', Game.toResponse(game));
+    this.server.to(client.id).emit('game:geted', Game.toResponse(game));
   }
 
   @SubscribeMessage('game:owner-leave')

@@ -1,7 +1,7 @@
 import React from "react";
 import { List } from "antd";
 
-import { Category } from "../../interfaces/categoryInterface";
+import { ICategory } from "../../interfaces/categoryInterface";
 
 import CategoryItem from "./CategoryItem";
 
@@ -9,7 +9,7 @@ import "./style.scss";
 import { observer } from "mobx-react-lite";
 
 interface CategoriesListProps {
-  categories: Category[];
+  categories: ICategory[];
 }
 
 const CategoriesList: React.FC<CategoriesListProps> = observer(
@@ -19,7 +19,7 @@ const CategoriesList: React.FC<CategoriesListProps> = observer(
         className="categories-list"
         itemLayout="horizontal"
         dataSource={categories}
-        renderItem={(category: Category) => (
+        renderItem={(category: ICategory) => (
           <CategoryItem category={category} />
         )}
       />

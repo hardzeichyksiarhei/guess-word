@@ -1,6 +1,5 @@
-import { IsString } from 'class-validator';
+import { OmitType } from '@nestjs/mapped-types';
 
-export class CreateGameDto {
-  @IsString()
-  name: string;
-}
+import { GameDto } from './game.dto';
+
+export class CreateGameDto extends OmitType(GameDto, ['id'] as const) {}

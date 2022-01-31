@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-interface ISettings {
+export interface ISettings {
   categories: string[];
 }
 

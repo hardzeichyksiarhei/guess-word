@@ -1,8 +1,6 @@
 export interface ICategory {
-  id?: string;
+  id: string;
   slug: string;
   label: string;
   words: string[];
 }
-
-export type Category = Required<ICategory>;

@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { IGameDocument } from './game.interface';
 import { Game } from './game.schema';
 import { CreateGameDto } from './dto/create-game.dto';
+import { UpdateGameDto } from './dto/update-game.dto';
 
 @Injectable()
 export class GameService {
@@ -15,6 +16,15 @@ export class GameService {
   async create(createGameDto: CreateGameDto) {
     const game = new this.model(createGameDto);
     return game.save();
+  }
+
+  async editById(id: string, updateGameDto: UpdateGameDto) {
+    const game = await this.model
+      .findOneAndUpdate({ id }, updateGameDto, {
+        new: true,
+      })
+      .exec();
+    return game;
   }
 
   async findById(id: string): Promise<IGameDocument> {
